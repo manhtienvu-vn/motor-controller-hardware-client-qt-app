@@ -1,0 +1,54 @@
+/* style.qss */
+
+QFrame {
+    background-color: #2A2A2A;
+}
+
+QStackedWidget {
+    background-color: #2A2A2A;
+}
+
+QComboBox {
+    background-color: #2A2A2A;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+}
+/* You can even style the dropdown menu that pops out! */
+QComboBox QAbstractItemView {
+    background-color: #2A2A2A;
+    color: white;
+    selection-background-color: #14887B;
+}
+
+#pageConnectionWidget {
+    background-color: #121212; /* A deep, dark background */
+}
+
+#lblStatus {
+    background-color: #E74C3C;
+    border-radius: 8px;
+}
+
+QPushButton {
+    background-color: transparent;
+    color: #A0A0A0;
+    border: none;
+    text-align: left;
+    padding: 10px 0px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    color: #FFFFFF;
+    background-color: #303030;
+}
+
+QPushButton:checked {
+    background-color: #14887B;
+    color: #FFFFFF;
+    border-left: 4px solid #2BAAA8;
+}

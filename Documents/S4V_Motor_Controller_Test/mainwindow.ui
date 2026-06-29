@@ -98,7 +98,7 @@
      <enum>Qt::TextFormat::MarkdownText</enum>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnNavConnection">
+   <widget class="QToolButton" name="btnNavConnection">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -110,8 +110,17 @@
     <property name="text">
      <string>Connection</string>
     </property>
+    <property name="iconSize">
+     <size>
+      <width>32</width>
+      <height>32</height>
+     </size>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+    </property>
    </widget>
-   <widget class="QPushButton" name="btnNavControl">
+   <widget class="QToolButton" name="btnNavControl">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -123,8 +132,11 @@
     <property name="text">
      <string>Control</string>
     </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+    </property>
    </widget>
-   <widget class="QPushButton" name="btnNavFirmware">
+   <widget class="QToolButton" name="btnNavFirmware">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -134,7 +146,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>btnNavFirmware</string>
+     <string>Update</string>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
     </property>
    </widget>
   </widget>

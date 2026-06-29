@@ -11,6 +11,17 @@ qt_add_executable(S4V_Motor_Controller_Test
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
+
+)
+
+qt_add_resources(S4V_Motor_Controller_Test "stylesheets"
+    PREFIX "/"
+    FILES
+        style.qss
+        steamforvietnam.png
+        connection.svg
+        control.svg
+        update.svg
 )
 
 target_link_libraries(S4V_Motor_Controller_Test

@@ -8,6 +8,8 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QButtonGroup>
+#include <QFrame>
+#include <QIcon>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,9 +34,16 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
-
     QStackedWidget *stackedWidget;
-
+    QWidget *pageConnectionWidget;
+    QWidget *pageControlWidget;
+    QWidget *pageFirmwareWidget;
+    QFrame *sideBarFrame;
     bool isRunning;
+
+    //Helper functions in constructor
+    void setupLayouts();
+    void setupNavigation();
+    void applyStyles();
 };
 #endif // MAINWINDOW_H

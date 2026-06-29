@@ -1,5 +1,137 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QFile>
+
+void MainWindow::setupLayouts(){
+    /* Create 3 dedicated switchable pages for CONNECTION, MOTOR CONTROL and FIRMWARE UPDATE */
+    pageConnectionWidget = new QWidget;
+    pageConnectionWidget->setObjectName("pageConnectionWidget");
+    pageControlWidget = new QWidget;
+    pageControlWidget->setObjectName("pageControlWidget");
+    pageFirmwareWidget = new QWidget;
+    pageFirmwareWidget->setObjectName("pageFirmwareWidget");
+
+    /* A Stacked Widget to manage and display (pages) */
+    stackedWidget = new QStackedWidget(this);
+    stackedWidget->addWidget(pageConnectionWidget);
+    stackedWidget->addWidget(pageControlWidget);
+    stackedWidget->addWidget(pageFirmwareWidget);
+
+    /* CONNECTION page */
+    QVBoxLayout *pageConnectionLayout = new QVBoxLayout(pageConnectionWidget);
+    pageConnectionLayout->addWidget(ui->comboBoxPort);
+    pageConnectionLayout->addWidget(ui->btnConnect);
+    pageConnectionLayout->addWidget(ui->lblStatus);
+
+    ui->lblStatus->setFixedSize(16, 16);
+    ui->lblStatus->setText("   Disconnected");
+
+    /* CONTROL page */
+    QVBoxLayout *pageControlLayout = new QVBoxLayout(pageControlWidget);
+    pageControlLayout->addWidget(ui->sliderSpeed);
+    pageControlLayout->addWidget(ui->lblValue);
+    pageControlLayout->addWidget(ui->btnStart);
+
+    /* Create a horizontal layout to arrange objects from left to right
+    (to display a left Side Bar & a central Stacked Widget) */
+    QHBoxLayout *mainLayout = new QHBoxLayout();
+    QWidget *centralWidget = new QWidget(this);
+    centralWidget->setLayout(mainLayout);
+    setCentralWidget(centralWidget);
+
+    sideBarFrame = new QFrame();
+    sideBarFrame->setObjectName("leftSideBar");
+    sideBarFrame->setFixedWidth(120); // Adjust this between 100-150 until it looks perfect
+
+    QVBoxLayout *sideBarLayout = new QVBoxLayout(sideBarFrame);
+
+    // --- NEW: Add the Logo ---
+    QLabel *logoLabel = new QLabel();
+    // Load the image and scale it smoothly to fit
+    QPixmap logoPix(":/steamforvietnam.png");
+    logoLabel->setPixmap(logoPix.scaled(150, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    logoLabel->setAlignment(Qt::AlignCenter);
+
+    // Add the logo to the top of the layout
+    sideBarLayout->addWidget(logoLabel);
+
+    // Add a little space between the logo and the first button
+    sideBarLayout->addSpacing(20);
+
+    /* Put the button group 'navGroup' of navigation push buttons into the side bar frame */
+    sideBarLayout->addWidget(ui->btnNavConnection);
+    sideBarLayout->addWidget(ui->btnNavControl);
+    sideBarLayout->addWidget(ui->btnNavFirmware);
+    sideBarLayout->addStretch();
+    sideBarLayout->setContentsMargins(0, 20, 0, 20);
+
+    /* Put the Side bar Frame and Stacked Widget into the Main Layout */
+    mainLayout->addWidget(sideBarFrame);
+    mainLayout->addWidget(stackedWidget);
+
+    ui->btnNavConnection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    ui->btnNavControl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    ui->btnNavFirmware->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    ui->btnNavConnection->setIcon(QIcon(":/connection.svg"));
+    ui->btnNavControl->setIcon(QIcon(":/control.svg"));
+    ui->btnNavFirmware->setIcon(QIcon(":/update.svg"));
+
+    QSize iconSize(32, 32);
+    ui->btnNavConnection->setIconSize(iconSize);
+    ui->btnNavControl->setIconSize(iconSize);
+    ui->btnNavFirmware->setIconSize(iconSize);
+}
+
+void MainWindow::setupNavigation(){
+    connect(ui->btnNavConnection, &QPushButton::clicked, [this]() {
+        /* Switch to CONNECTION page when the Connection navigation button is clicked */
+        stackedWidget->setCurrentIndex(stackedWidget->indexOf(pageConnectionWidget));
+    });
+
+    connect(ui->btnNavControl, &QPushButton::clicked, [this](){
+        /* Switch to CONTROL page when the Connection navigation button is clicked */
+        stackedWidget->setCurrentIndex(stackedWidget->indexOf(pageControlWidget));
+    });
+
+    /* Set navigation buttons as radio buttons that are checkable */
+    ui->btnNavConnection->setCheckable(true);
+    ui->btnNavControl->setCheckable(true);
+    ui->btnNavFirmware->setCheckable(true);
+
+    QButtonGroup *navGroup = new QButtonGroup(this);
+    navGroup->addButton(ui->btnNavConnection);
+    navGroup->addButton(ui->btnNavControl);
+    navGroup->addButton(ui->btnNavFirmware);
+
+    /* Allows only 01 button is checked at a time */
+    navGroup->setExclusive(true);
+
+    /* Set the initial visible page as CONNECTION page */
+    ui->btnNavConnection->setChecked(true);
+}
+
+void MainWindow::applyStyles(){
+    // ui->lblStatus->setFixedSize(100, 100);
+
+    QFile styleFile(":/style.qss");
+
+    qDebug() << "1. Does QSS exist? :" << QFile::exists(":/style.qss");
+
+    if(styleFile.open(QFile::ReadOnly)){
+        // Use fromUtf8 to safely read the text
+        QString styleSheet = QString::fromUtf8(styleFile.readAll());
+
+        qDebug() << "2. File opened successfully.";
+        qDebug() << "3. Characters read :" << styleSheet.length();
+        qDebug() << "4. File Contents :\n" << styleSheet;
+
+        this->setStyleSheet(styleSheet);
+        styleFile.close();
+    } else {
+        qDebug() << "FAILED to open file for reading!";
+    }
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -23,96 +155,13 @@ MainWindow::MainWindow(QWidget *parent)
     //Set isRunning initially as false (not running)
     isRunning = false;
 
-    // ui->sliderSpeed->setVisible(false);
-    // ui->btnStart->setVisible(false);
-    // ui->lblValue->setVisible(false);
-
-    QWidget *firstPageWidget = new QWidget;
-    QWidget *secondPageWidget = new QWidget;
-    QWidget *thirdPageWidget = new QWidget;
-
-    stackedWidget = new QStackedWidget(this);
-    stackedWidget->addWidget(firstPageWidget);
-    stackedWidget->addWidget(secondPageWidget);
-    stackedWidget->addWidget(thirdPageWidget);
-
-    QVBoxLayout *pageConnectionLayout = new QVBoxLayout(firstPageWidget);
-    pageConnectionLayout->addWidget(ui->comboBoxPort);
-    pageConnectionLayout->addWidget(ui->btnConnect);
-    pageConnectionLayout->addWidget(ui->lblStatus);
 
 
-    QVBoxLayout *pageControlLayout = new QVBoxLayout(secondPageWidget);
-    pageControlLayout->addWidget(ui->sliderSpeed);
-    pageControlLayout->addWidget(ui->lblValue);
-    pageControlLayout->addWidget(ui->btnStart);
+    setupLayouts();
 
-    QHBoxLayout *mainLayout = new QHBoxLayout(this);
-    QVBoxLayout *sideBarLayout = new QVBoxLayout();
+    setupNavigation();
 
-    sideBarLayout->addWidget(ui->btnNavConnection);
-    sideBarLayout->addWidget(ui->btnNavControl);
-    sideBarLayout->addWidget(ui->btnNavFirmware);
-    sideBarLayout->addStretch();
-
-    mainLayout->addLayout(sideBarLayout);
-
-    mainLayout->addWidget(stackedWidget);
-
-
-    QWidget *centralWidget = new QWidget(this);
-    centralWidget->setLayout(mainLayout);
-    setCentralWidget(centralWidget);
-
-    connect(ui->btnNavConnection, &QPushButton::clicked, [this]() {
-        stackedWidget->setCurrentIndex(0);
-    });
-
-    connect(ui->btnNavControl, &QPushButton::clicked, [this](){
-        stackedWidget->setCurrentIndex(1);
-    });
-
-    ui->btnNavConnection->setCheckable(true);
-    ui->btnNavControl->setCheckable(true);
-    ui->btnNavFirmware->setCheckable(true);
-
-    QButtonGroup *navGroup = new QButtonGroup(this);
-    navGroup->setExclusive(true);
-
-    navGroup->addButton(ui->btnNavConnection);
-    navGroup->addButton(ui->btnNavControl);
-    navGroup->addButton(ui->btnNavFirmware);
-
-    ui->btnNavConnection->setChecked(true);
-
-    // Define the style sheet string
-    QString buttonStyle =
-        //Default state (Unchecked)
-        "QPushButton {"
-        "   background-color: transparent;" // No background normally
-        "   color: #A0A0A0;"               // Gray text
-        "   border: none;"
-        "   text-align: left;"             // Align text to the left
-        "   padding: 10px 20px;"
-        "   font-size: 14px;"
-        "   font-weight: bold;"
-        "}"
-        // Hover state (When mouse is over it but not clicked)
-        "QPushButton:hover {"
-        "   color: #A0A0A0;"               // Text turns white
-        "   background-color: transparent;"    // Slight dark gray background
-        "}"
-        // Checked state (The active active page)
-        "QPushButton:checked {"
-        "   background-color: #14887B;"    // Bright Blue highlight
-        "   color: #DAF4F2;"               // White text
-        "   border-left: 4px solid #00BFFF;" // A nice accent line on the left
-        "}";
-
-    // Apply the style to the buttons
-    ui->btnNavConnection->setStyleSheet(buttonStyle);
-    ui->btnNavControl->setStyleSheet(buttonStyle);
-    ui->btnNavFirmware->setStyleSheet(buttonStyle);
+    applyStyles();
 }
 
 
@@ -128,29 +177,20 @@ void MainWindow::on_btnConnect_clicked(){
         serial->close();
 
         ui->lblStatus->setText("Disconnected");
-
+        ui->lblStatus->setStyleSheet("background-color: #E74C3C; border-radius: 8px;");
         ui->btnConnect->setText("Connect");
-
-        // ui->sliderSpeed->setVisible(false);
-        // ui->btnStart->setVisible(false);
-        // ui->lblValue->setVisible(false);
     }
     else {
-        // ui->sliderSpeed->setVisible(true);
-        // ui->btnStart->setVisible(true);
-        // ui->lblValue->setVisible(true);
-
         serial->setPortName(ui->comboBoxPort->currentText());
 
         serial->setBaudRate(QSerialPort::Baud115200);
 
         if (serial->open(QIODevice::ReadWrite)){
             ui->lblStatus->setText("Connected");
-
+            ui->lblStatus->setStyleSheet("background-color: #2ECC71; border-radius: 8px;");
             ui->btnConnect->setText("Disconnect");
         }
     }
-
 }
 
 void MainWindow::handleSliderSpeedChanged(int value){
@@ -182,4 +222,3 @@ void MainWindow::on_btnStart_clicked(){
 
     serial->write(data);
 }
-
