@@ -49,7 +49,6 @@ void MainWindow::setupLeftSidebar()
     // Add a little space between the logo and the first button
     sideBarLayout->addSpacing(10);
 
-
     /* Put the button group 'navGroup' of navigation push buttons into the side bar frame */
     sideBarLayout->addWidget(ui->btnNavConnection);
     sideBarLayout->addWidget(ui->btnNavControl);
@@ -115,10 +114,32 @@ void MainWindow::setupLayouts(){
     headerLayout->addWidget(logoLabel);
     headerLayout->addSpacing(30);
 
+    // //Create the Container Frame
+    statusPill = new QFrame();
+    statusPill->setObjectName("statusPill");
+    statusPill->setFixedHeight(28);
+
+    //Give the Pill a horizontal layout
+    QHBoxLayout *pillLayout = new QHBoxLayout(statusPill);
+    pillLayout->setContentsMargins(10, 0, 10, 0);
+    pillLayout->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    pillLayout->setSpacing(8); //space between the dot and the text label
+
+    //Create the Status Dot
+    lblHeaderDot = new QLabel();
+    lblHeaderDot->setObjectName("lblHeaderDot");
+    lblHeaderDot->setFixedSize(12, 12);
+    lblHeaderDot->setText("");          // CRITICAL: Ensure no text is in the dot
+    lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
+
+    //Create the Status Text
     lblConnectedDevice = new QLabel("Connected Device: None");
     lblConnectedDevice->setObjectName("lblConnectedDevice");
-    headerLayout->addWidget(lblConnectedDevice);
 
+    pillLayout->addWidget(lblHeaderDot);
+    pillLayout->addWidget(lblConnectedDevice);
+    pillLayout->addStretch();
+    headerLayout->addWidget(statusPill);
     headerLayout->addStretch();
 
     //2. CREATE THE BOTTOM SECTION (Sidebar + Content)
@@ -169,8 +190,6 @@ void MainWindow::setupNavigation(){
 }
 
 void MainWindow::applyStyles(){
-    // ui->lblStatus->setFixedSize(100, 100);
-
     QFile styleFile(":/style.qss");
 
     qDebug() << "1. Does QSS exist? :" << QFile::exists(":/style.qss");
@@ -178,11 +197,6 @@ void MainWindow::applyStyles(){
     if(styleFile.open(QFile::ReadOnly)){
         // Use fromUtf8 to safely read the text
         QString styleSheet = QString::fromUtf8(styleFile.readAll());
-
-        qDebug() << "2. File opened successfully.";
-        qDebug() << "3. Characters read :" << styleSheet.length();
-        qDebug() << "4. File Contents :\n" << styleSheet;
-
         this->setStyleSheet(styleSheet);
         styleFile.close();
     } else {
@@ -190,9 +204,7 @@ void MainWindow::applyStyles(){
     }
 }
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -235,25 +247,28 @@ void MainWindow::on_btnConnect_clicked(){
         ui->lblStatus->setStyleSheet("background-color: #E74C3C; border-radius: 8px;");
         ui->btnConnect->setText("Connect");
         lblConnectedDevice->setText("Connected Device: None");
+        lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
     }
     else {
         serial->setPortName(ui->comboBoxPort->currentText());
-
         serial->setBaudRate(QSerialPort::Baud115200);
 
         if (serial->open(QIODevice::ReadWrite)){
             ui->lblStatusText->setText("Connected");
             ui->lblStatus->setStyleSheet("background-color: #2ECC71; border-radius: 8px;");
             ui->btnConnect->setText("Disconnect");
-            QString statusString = "Connected Device: " + ui->comboBoxPort->currentText();
-            lblConnectedDevice->setText(statusString);
+
+            QString portName = ui->comboBoxPort->currentText();
+            QString fullStatus = "Connected | " + portName + " | S4V Motor Controller Rev2.0";
+            lblConnectedDevice->setText(fullStatus);
+            lblHeaderDot->setStyleSheet("background-color: #2ECC71; border-radius: 6px;"); // Turn it green!
         }
     }
 }
 
 void MainWindow::handleSliderSpeedChanged(int value){
     ui->lblValue->setText(QString::number(value));
-    if((!serial->isOpen()) || (!isRunning)){
+    if( (!serial->isOpen()) || (!isRunning) ){
         return;
     }
     qDebug() << "Motor is running at Speed: " << value << "\n";

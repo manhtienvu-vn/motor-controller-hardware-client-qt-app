@@ -11,7 +11,7 @@
 #include <QFrame>
 #include <QIcon>
 #include <QLabel>
-
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -31,7 +31,7 @@ private slots:
     void on_btnConnect_clicked();
     void handleSliderSpeedChanged(int value);
     void on_btnStart_clicked();
-    // void on_connection_changed();
+    void updatePortList();
 
 private:
     Ui::MainWindow *ui;
@@ -41,6 +41,8 @@ private:
     QWidget *pageControlWidget;
     QWidget *pageUpdateWidget;
     QFrame *sideBarFrame;
+    QFrame *statusPill;
+    QLabel *lblHeaderDot;
     QLabel *lblConnectedDevice;
     bool isRunning;
 

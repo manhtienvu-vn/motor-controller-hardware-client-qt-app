@@ -12,6 +12,23 @@ QFrame {
     background-color: transparent;
 }
 
+#statusPill {
+    background-color: #1E242B; /* Deep dark background */
+    border-radius: 12px;       /* Perfectly rounded corners */
+}
+
+#lblHeaderDot {
+    background-color: #E74C3C; /* The bright blue color */
+    border-radius: 6px;        /* Must be exactly half of the 12px FixedSize! */
+}
+
+#lblConnectedDevice {
+    color: #C9D1D9; /* Soft, readable light gray/white */
+    font-size: 13px;
+    font-weight: bold;
+    background-color: transparent; /* Prevents the label from drawing its own box */
+}
+
 #lblActiveDevice {
     color: #6B7280;
     font-size: 11px;
