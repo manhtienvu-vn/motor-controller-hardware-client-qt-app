@@ -4,6 +4,21 @@ QFrame {
     background-color: #2A2A2A;
 }
 
+#headerFrame {
+    background-color: #FEFEFA;
+}
+
+#headerFrame QLabel {
+    background-color: transparent;
+}
+
+#lblActiveDevice {
+    color: #6B7280;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
 QStackedWidget {
     background-color: #2A2A2A;
 }
@@ -16,7 +31,8 @@ QComboBox {
     padding: 8px;
     font-size: 14px;
 }
-/* You can even style the dropdown menu that pops out! */
+
+/* You can  style the dropdown menu that pops out! */
 QComboBox QAbstractItemView {
     background-color: #2A2A2A;
     color: white;
@@ -30,6 +46,26 @@ QComboBox QAbstractItemView {
 #lblStatus {
     background-color: #E74C3C;
     border-radius: 8px;
+}
+
+#lblStatusText {
+    color: #FEFEFA;
+    font-weight: bold;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+#lblValue {
+    color: #FEFEFA;
+    font-weight: bold;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+QToolButton {
+    font-weight: bold;
+    font-size: 12px;
+    letter-spacing: 1px;
 }
 
 QPushButton {

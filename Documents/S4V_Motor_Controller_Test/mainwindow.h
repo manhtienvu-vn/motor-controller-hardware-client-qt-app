@@ -10,6 +10,8 @@
 #include <QButtonGroup>
 #include <QFrame>
 #include <QIcon>
+#include <QLabel>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,7 +31,7 @@ private slots:
     void on_btnConnect_clicked();
     void handleSliderSpeedChanged(int value);
     void on_btnStart_clicked();
-
+    // void on_connection_changed();
 
 private:
     Ui::MainWindow *ui;
@@ -37,12 +39,18 @@ private:
     QStackedWidget *stackedWidget;
     QWidget *pageConnectionWidget;
     QWidget *pageControlWidget;
-    QWidget *pageFirmwareWidget;
+    QWidget *pageUpdateWidget;
     QFrame *sideBarFrame;
+    QLabel *lblConnectedDevice;
     bool isRunning;
 
     //Helper functions in constructor
     void setupLayouts();
+    void setupLeftSidebar();
+    void setupCentralWidget();
+    void setupPageConnection();
+    void setupPageControl();
+    void setupPageUpdate();
     void setupNavigation();
     void applyStyles();
 };

@@ -2,61 +2,53 @@
 #include "ui_mainwindow.h"
 #include <QFile>
 
-void MainWindow::setupLayouts(){
-    /* Create 3 dedicated switchable pages for CONNECTION, MOTOR CONTROL and FIRMWARE UPDATE */
-    pageConnectionWidget = new QWidget;
-    pageConnectionWidget->setObjectName("pageConnectionWidget");
-    pageControlWidget = new QWidget;
-    pageControlWidget->setObjectName("pageControlWidget");
-    pageFirmwareWidget = new QWidget;
-    pageFirmwareWidget->setObjectName("pageFirmwareWidget");
-
-    /* A Stacked Widget to manage and display (pages) */
-    stackedWidget = new QStackedWidget(this);
-    stackedWidget->addWidget(pageConnectionWidget);
-    stackedWidget->addWidget(pageControlWidget);
-    stackedWidget->addWidget(pageFirmwareWidget);
+void MainWindow::setupPageConnection()
+{
+    ui->lblStatus->setFixedSize(16, 16);
+    ui->lblStatus->setText("");
+    ui->lblStatusText->setText("Disconnected");
 
     /* CONNECTION page */
     QVBoxLayout *pageConnectionLayout = new QVBoxLayout(pageConnectionWidget);
+    // Add Active Device Label and Combo Box to Header
+    QLabel *lblActiveDevice = new QLabel("ACTIVE DEVICE");
+    lblActiveDevice->setObjectName("lblActiveDevice");
+    pageConnectionLayout->addWidget(lblActiveDevice);
     pageConnectionLayout->addWidget(ui->comboBoxPort);
     pageConnectionLayout->addWidget(ui->btnConnect);
-    pageConnectionLayout->addWidget(ui->lblStatus);
 
-    ui->lblStatus->setFixedSize(16, 16);
-    ui->lblStatus->setText("   Disconnected");
+    // Create a horizontal box for the Status Dot and the Status Text
+    QHBoxLayout *statusContainer = new QHBoxLayout();
+    statusContainer->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    statusContainer->setSpacing(8);
+    statusContainer->addWidget(ui->lblStatus);
+    statusContainer->addWidget(ui->lblStatusText);
 
+    pageConnectionLayout->addLayout(statusContainer);
+    pageConnectionLayout->addStretch();
+}
+
+void MainWindow::setupPageControl()
+{
     /* CONTROL page */
     QVBoxLayout *pageControlLayout = new QVBoxLayout(pageControlWidget);
+
     pageControlLayout->addWidget(ui->sliderSpeed);
     pageControlLayout->addWidget(ui->lblValue);
     pageControlLayout->addWidget(ui->btnStart);
+    pageControlLayout->addStretch();
+}
 
-    /* Create a horizontal layout to arrange objects from left to right
-    (to display a left Side Bar & a central Stacked Widget) */
-    QHBoxLayout *mainLayout = new QHBoxLayout();
-    QWidget *centralWidget = new QWidget(this);
-    centralWidget->setLayout(mainLayout);
-    setCentralWidget(centralWidget);
-
+void MainWindow::setupLeftSidebar()
+{
     sideBarFrame = new QFrame();
     sideBarFrame->setObjectName("leftSideBar");
-    sideBarFrame->setFixedWidth(120); // Adjust this between 100-150 until it looks perfect
+    sideBarFrame->setFixedWidth(100); // Adjust this between 100-150 until it looks perfect
 
     QVBoxLayout *sideBarLayout = new QVBoxLayout(sideBarFrame);
-
-    // --- NEW: Add the Logo ---
-    QLabel *logoLabel = new QLabel();
-    // Load the image and scale it smoothly to fit
-    QPixmap logoPix(":/steamforvietnam.png");
-    logoLabel->setPixmap(logoPix.scaled(150, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    logoLabel->setAlignment(Qt::AlignCenter);
-
-    // Add the logo to the top of the layout
-    sideBarLayout->addWidget(logoLabel);
-
     // Add a little space between the logo and the first button
-    sideBarLayout->addSpacing(20);
+    sideBarLayout->addSpacing(10);
+
 
     /* Put the button group 'navGroup' of navigation push buttons into the side bar frame */
     sideBarLayout->addWidget(ui->btnNavConnection);
@@ -64,10 +56,6 @@ void MainWindow::setupLayouts(){
     sideBarLayout->addWidget(ui->btnNavFirmware);
     sideBarLayout->addStretch();
     sideBarLayout->setContentsMargins(0, 20, 0, 20);
-
-    /* Put the Side bar Frame and Stacked Widget into the Main Layout */
-    mainLayout->addWidget(sideBarFrame);
-    mainLayout->addWidget(stackedWidget);
 
     ui->btnNavConnection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     ui->btnNavControl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -81,6 +69,75 @@ void MainWindow::setupLayouts(){
     ui->btnNavConnection->setIconSize(iconSize);
     ui->btnNavControl->setIconSize(iconSize);
     ui->btnNavFirmware->setIconSize(iconSize);
+}
+
+void MainWindow::setupPageUpdate()
+{
+
+}
+
+void MainWindow::setupCentralWidget()
+{
+    /* A Stacked Widget to manage and display (pages) */
+    stackedWidget = new QStackedWidget(this);
+    stackedWidget->addWidget(pageConnectionWidget);
+    stackedWidget->addWidget(pageControlWidget);
+    stackedWidget->addWidget(pageUpdateWidget);
+}
+void MainWindow::setupLayouts(){
+    /* Create 3 dedicated switchable pages for CONNECTION, MOTOR CONTROL and FIRMWARE UPDATE */
+    pageConnectionWidget = new QWidget;
+    pageConnectionWidget->setObjectName("pageConnectionWidget");
+    pageControlWidget = new QWidget;
+    pageControlWidget->setObjectName("pageControlWidget");
+    pageUpdateWidget = new QWidget;
+    pageUpdateWidget->setObjectName("pageUpdateWidget");
+
+    setupPageConnection();
+    setupPageControl();
+    setupPageUpdate();
+    setupLeftSidebar();
+    setupCentralWidget();
+
+    //1. CREATE THE GLOBAL HEADER
+    QFrame *headerFrame = new QFrame();
+    headerFrame->setObjectName("headerFrame");
+    headerFrame->setFixedHeight(65);
+
+    QHBoxLayout *headerLayout = new QHBoxLayout(headerFrame);
+    headerLayout->setContentsMargins(20, 0, 20, 0);
+
+    //Add logo to Header
+    QLabel *logoLabel = new QLabel();
+    // Load the image and scale it smoothly to fit
+    QPixmap logoPix(":/steamforvietnam.png");
+    logoLabel->setPixmap(logoPix.scaled(150, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    headerLayout->addWidget(logoLabel);
+    headerLayout->addSpacing(30);
+
+    lblConnectedDevice = new QLabel("Connected Device: None");
+    lblConnectedDevice->setObjectName("lblConnectedDevice");
+    headerLayout->addWidget(lblConnectedDevice);
+
+    headerLayout->addStretch();
+
+    //2. CREATE THE BOTTOM SECTION (Sidebar + Content)
+    QHBoxLayout *bottomLayout = new QHBoxLayout();
+    bottomLayout->setContentsMargins(0, 0, 0, 0);
+    bottomLayout->setSpacing(0);
+    bottomLayout->addWidget(sideBarFrame);
+    bottomLayout->addWidget(stackedWidget);
+
+    //3. MASTER ASSEMBLY (Vertical Split)
+    QVBoxLayout *masterLayout = new QVBoxLayout();
+    masterLayout->setContentsMargins(0, 0, 0, 0);
+    masterLayout->setSpacing(0);
+    masterLayout->addWidget(headerFrame);
+    masterLayout->addLayout(bottomLayout);
+
+    QWidget *centralWidget = new QWidget(this);
+    centralWidget->setLayout(masterLayout);
+    setCentralWidget(centralWidget);
 }
 
 void MainWindow::setupNavigation(){
@@ -155,8 +212,6 @@ MainWindow::MainWindow(QWidget *parent)
     //Set isRunning initially as false (not running)
     isRunning = false;
 
-
-
     setupLayouts();
 
     setupNavigation();
@@ -176,9 +231,10 @@ void MainWindow::on_btnConnect_clicked(){
     if (serial->isOpen()){
         serial->close();
 
-        ui->lblStatus->setText("Disconnected");
+        ui->lblStatusText->setText("Disconnected");
         ui->lblStatus->setStyleSheet("background-color: #E74C3C; border-radius: 8px;");
         ui->btnConnect->setText("Connect");
+        lblConnectedDevice->setText("Connected Device: None");
     }
     else {
         serial->setPortName(ui->comboBoxPort->currentText());
@@ -186,9 +242,11 @@ void MainWindow::on_btnConnect_clicked(){
         serial->setBaudRate(QSerialPort::Baud115200);
 
         if (serial->open(QIODevice::ReadWrite)){
-            ui->lblStatus->setText("Connected");
+            ui->lblStatusText->setText("Connected");
             ui->lblStatus->setStyleSheet("background-color: #2ECC71; border-radius: 8px;");
             ui->btnConnect->setText("Disconnect");
+            QString statusString = "Connected Device: " + ui->comboBoxPort->currentText();
+            lblConnectedDevice->setText(statusString);
         }
     }
 }
@@ -201,7 +259,8 @@ void MainWindow::handleSliderSpeedChanged(int value){
     qDebug() << "Motor is running at Speed: " << value << "\n";
 }
 
-void MainWindow::on_btnStart_clicked(){
+void MainWindow::on_btnStart_clicked()
+{
     if (!serial->isOpen()){
         return;
     }
@@ -222,3 +281,8 @@ void MainWindow::on_btnStart_clicked(){
 
     serial->write(data);
 }
+
+// void MainWindow::on_connection_changed()
+// {
+
+// }
