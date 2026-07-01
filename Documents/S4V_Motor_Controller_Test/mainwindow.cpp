@@ -221,8 +221,15 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) , ui(new Ui::MainWi
             this,
             &MainWindow::handleSliderSpeedChanged);
 
+    portTimer = new QTimer(this);
+    connect(portTimer, &QTimer::timeout, this, &MainWindow::updatePortList);
+    portTimer->start(1000);
+    updatePortList();
+
     //Set isRunning initially as false (not running)
     isRunning = false;
+
+    cableUnplugged = false;
 
     setupLayouts();
 
@@ -248,6 +255,8 @@ void MainWindow::on_btnConnect_clicked(){
         ui->btnConnect->setText("Connect");
         lblConnectedDevice->setText("Connected Device: None");
         lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
+
+        cableUnplugged = true;
     }
     else {
         serial->setPortName(ui->comboBoxPort->currentText());
@@ -262,6 +271,8 @@ void MainWindow::on_btnConnect_clicked(){
             QString fullStatus = "Connected | " + portName + " | S4V Motor Controller Rev2.0";
             lblConnectedDevice->setText(fullStatus);
             lblHeaderDot->setStyleSheet("background-color: #2ECC71; border-radius: 6px;"); // Turn it green!
+
+            cableUnplugged = false;
         }
     }
 }
@@ -297,7 +308,44 @@ void MainWindow::on_btnStart_clicked()
     serial->write(data);
 }
 
-// void MainWindow::on_connection_changed()
-// {
+void MainWindow::updatePortList()
+{
+    //1. Get the live list of ports connected at the moment
+    QList<QSerialPortInfo> availablePorts = QSerialPortInfo::availablePorts();
+    QStringList livePortNames;
 
-// }
+    for (const QSerialPortInfo &port : availablePorts){
+        livePortNames  << port.portName();
+    }
+
+    //2. Get the list of ports currently sitting inside my ComboBox
+    QStringList existingPortNames;
+    for (int i = 0; i < ui->comboBoxPort->count(); i++){
+        existingPortNames << ui->comboBoxPort->itemText(i);
+    }
+
+    //3. CHECK: If the lists are exactly the same, do nothing
+    if (livePortNames == existingPortNames){
+        return;
+    }
+
+    //4. If a change happened, update the UI
+    QString currentSelection = ui->comboBoxPort->currentText();
+    //Wipe the box and add the fresh list
+    ui->comboBoxPort->clear();
+    ui->comboBoxPort->addItems(livePortNames);
+
+    //Try to restore the previous selection (if that cable is still plugged in)
+    int index = ui->comboBoxPort->findText(currentSelection);
+    if (index != -1){
+        ui->comboBoxPort->setCurrentIndex(index);
+    } else {
+        cableUnplugged = true;
+
+        ui->lblStatusText->setText("Disconnected");
+        ui->lblStatus->setStyleSheet("background-color: #E74C3C; border-radius: 8px;");
+        ui->btnConnect->setText("Connect");
+        lblConnectedDevice->setText("Connected Device: None");
+        lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
+    }
+}

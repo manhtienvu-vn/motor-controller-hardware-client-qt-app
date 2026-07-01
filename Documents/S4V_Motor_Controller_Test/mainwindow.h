@@ -44,7 +44,9 @@ private:
     QFrame *statusPill;
     QLabel *lblHeaderDot;
     QLabel *lblConnectedDevice;
+    QTimer *portTimer;
     bool isRunning;
+    bool cableUnplugged;
 
     //Helper functions in constructor
     void setupLayouts();
