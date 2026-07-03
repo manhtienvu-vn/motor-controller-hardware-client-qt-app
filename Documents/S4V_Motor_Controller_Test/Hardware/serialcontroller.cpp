@@ -38,8 +38,8 @@ void SerialController::connectToDevice(const QString &portName)
 
     if (serial->open(QIODevice::ReadWrite)){
         //Prevent auto-reset on connection
-        serial->setDataTerminalReady(false); //Pulls DTR low
-        serial->setRequestToSend(false); //Pulls RTS low
+        serial->setDataTerminalReady(false);
+        serial->setRequestToSend(false);
 
         //Ping the connected device for its ID
         serial->write("?ID\n");

@@ -37,14 +37,15 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QFrame *sideBarFrame;
     QStackedWidget *stackedWidget;
     QWidget *pageConnectionWidget;
-    QWidget *pageControlWidget;
-    QWidget *pageUpdateWidget;
-    QFrame *sideBarFrame;
     QFrame *statusPill;
     QLabel *lblHeaderDot;
     QLabel *lblConnectedDevice;
+    QWidget *pageControlWidget;
+    QWidget *pageUpdateWidget;
+
     bool isRunning;
     bool cableUnplugged;
     SerialController* hardware;
@@ -63,5 +64,6 @@ private:
     void UI_updateConnection(bool connection, QString portName, QString deviceName);
     void UI_updatePortList(QStringList &portList);
     void UI_showMessageBox(QMessageBox::Icon icon,  const QString &title, const QString &msg, const QString &errorMessage);
+    void UI_resetControlPanel();
 };
 #endif // MAINWINDOW_H

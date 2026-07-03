@@ -1,10 +1,13 @@
 /* style.qss */
+* {
+    font-family: "Quicksand";
+}
 
-QFrame {
+QFrame#leftSideBar {
     background-color: #2A2A2A;
 }
 
-#headerFrame {
+QFrame#headerFrame {
     background-color: #FEFEFA;
 }
 
@@ -24,14 +27,25 @@ QFrame {
 
 #lblConnectedDevice {
     color: #C9D1D9; /* Soft, readable light gray/white */
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold;
     background-color: transparent; /* Prevents the label from drawing its own box */
 }
 
+QFrame#firstSTEPFrame {
+    background-color: #AADBE9; /* Example: Soft dark gray background for the card */
+    border-radius: 12px;       /* Example: Gives it beautiful rounded corners */
+    border: 1px solid #3A3F48; /* Example: A subtle border to make it pop */
+}
+
+QLabel#lblFirstSTEP {
+    font-size: 18px;
+    font-weight: bold;
+}
+
 #lblActiveDevice {
     color: #6B7280;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: bold;
     letter-spacing: 1px;
 }
@@ -109,13 +123,14 @@ QPushButton:checked {
 /* Style the Message Box Background */
 QMessageBox {
     background-color: #F9FAFB; /* Light gray/white background */
+
 }
 
 /* Style the Text inside the Message Box */
 QMessageBox QLabel {
     color: #1F2937; /* Dark text */
     background-color: transparent;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold;
 }
 
@@ -131,3 +146,12 @@ QMessageBox QPushButton {
 QMessageBox QPushButton:hover {
     background-color: #2563EB; /* Darker blue on hover */
 }
+
+QMainWindow {
+    font-family: "Quicksand";
+}
+
+QLabel#heading {
+    font-size: 18pt;
+    font-family: "Quicksand";
+    font-weight: bold;

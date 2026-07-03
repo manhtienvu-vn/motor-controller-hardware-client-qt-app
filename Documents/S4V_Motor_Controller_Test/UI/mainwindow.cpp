@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "UI/ui_mainwindow.h"
 #include <QFile>
+#include <QFontDatabase>
 
 void MainWindow::UI_setupPageConnection()
 {
@@ -10,11 +11,48 @@ void MainWindow::UI_setupPageConnection()
 
     /* CONNECTION page */
     QVBoxLayout *pageConnectionLayout = new QVBoxLayout(pageConnectionWidget);
-    // Add Active Device Label and Combo Box to Header
+
+    QFrame* firstSTEPFrame = new QFrame();
+    firstSTEPFrame->setObjectName("firstSTEPFrame");
+    firstSTEPFrame->setFixedHeight(100);
+    firstSTEPFrame->setFixedWidth(600);
+    QVBoxLayout* firstSTEPLayout = new QVBoxLayout(firstSTEPFrame);
+    firstSTEPLayout->setContentsMargins(10,10,10,10);
+
+
+
+    QLabel* firstSTEPLabel = new QLabel("STEP 1: CHOOSE YOUR PORT");
+    firstSTEPLabel->setObjectName("lblFirstSTEP");
+
+    //2. CREATE THE BOTTOM SECTION
+    QHBoxLayout *firstSTEPBottomLayout = new QHBoxLayout();
+    firstSTEPBottomLayout->setContentsMargins(0, 0, 0, 0);
+    firstSTEPBottomLayout->setSpacing(0);
+    firstSTEPBottomLayout->addWidget(ui->comboBoxPort);
+
+    // TIP: Change spacing from 0 to 15 so the icon doesn't touch the combo box!
+    firstSTEPBottomLayout->setSpacing(10);
+
+    // --- NEW: Create the Image Label ---
+    QLabel *iconLabel = new QLabel();
+
+    // Load the image from your resources (assuming you have a usb.svg or similar)
+    // You can use ":/connection.svg" to test it right now!
+    QPixmap iconPix(":/connection.svg");
+
+    // Scale the image down so it fits nicely next to the text box (e.g., 24x24 pixels)
+    iconLabel->setPixmap(iconPix.scaled(50, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    iconLabel->setAlignment(Qt::AlignRight);
+    firstSTEPBottomLayout->addWidget(iconLabel);
+
+    firstSTEPLayout->addWidget(firstSTEPLabel);
+    firstSTEPLayout->addLayout(firstSTEPBottomLayout);
+
     QLabel *lblActiveDevice = new QLabel("ACTIVE DEVICE");
     lblActiveDevice->setObjectName("lblActiveDevice");
-    pageConnectionLayout->addWidget(lblActiveDevice);
-    pageConnectionLayout->addWidget(ui->comboBoxPort);
+    // pageConnectionLayout->addWidget(lblActiveDevice);
+    // pageConnectionLayout->addWidget(ui->comboBoxPort);
+    pageConnectionLayout->addWidget(firstSTEPFrame, 0, Qt::AlignCenter);
     pageConnectionLayout->addWidget(ui->btnConnect);
 
     // Create a horizontal box for the Status Dot and the Status Text
@@ -192,13 +230,6 @@ void MainWindow::UI_setupNavigation(){
 void MainWindow::UI_applyStyles(){
     QFile styleFile(":/style.qss");
 
-    qDebug() << "--- LISTING ALL COMPILED RESOURCES ---";
-    QDirIterator it(":", QDirIterator::Subdirectories);
-    while (it.hasNext()) {
-        qDebug() << it.next();
-    }
-    qDebug() << "--------------------------------------";
-
     qDebug() << "1. Does QSS exist? :" << QFile::exists(":/style.qss");
 
     if(styleFile.open(QFile::ReadOnly)){
@@ -260,6 +291,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) , ui(new Ui::MainWi
                         this,
                         [this](){
                             UI_updateConnection(false, "", "");
+                            UI_resetControlPanel();
             });
 
     UI_setupLayouts();
@@ -281,8 +313,7 @@ void MainWindow::UI_updateConnection(bool connection, QString portName, QString 
         lblConnectedDevice->setText("Connected Device: None");
         lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
 
-        ui->btnStart->setText("START");
-        ui->sliderSpeed->setSliderPosition(0);
+
 
         qDebug("The device is unplugged. Stopped the motor!");
     } else {
@@ -371,3 +402,7 @@ void MainWindow::UI_showMessageBox(QMessageBox::Icon icon, const QString &title,
     }
 }
 
+void MainWindow::UI_resetControlPanel() {
+    ui->btnStart->setText("START");
+    ui->sliderSpeed->setSliderPosition(0);
+}
