@@ -12,12 +12,24 @@ qt_add_executable(S4V_Motor_Controller_Test
 
     UI/mainwindow.cpp
     UI/mainwindow.h
+    UI/mainwindow.ui
 
     Hardware/serialcontroller.cpp
     Hardware/serialcontroller.h
 
-    # This one file tells Qt where to find all your images and stylesheets
-    Resources/resources.qrc
+)
+
+
+# --- NEW: The Bulletproof Qt 6 Resource Compiler ---
+qt_add_resources(S4V_Motor_Controller_Test "assets"
+    PREFIX "/"
+    BASE "Resources"
+    FILES
+        Resources/style.qss
+        Resources/steamforvietnam.png
+        Resources/connection.svg
+        Resources/control.svg
+        Resources/update.svg
 )
 
 target_link_libraries(S4V_Motor_Controller_Test
@@ -26,6 +38,8 @@ target_link_libraries(S4V_Motor_Controller_Test
     Qt::Widgets
     Qt::SerialPort
 )
+
+target_include_directories(S4V_Motor_Controller_Test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 install(TARGETS S4V_Motor_Controller_Test
     BUNDLE  DESTINATION .

@@ -1,8 +1,8 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "UI/ui_mainwindow.h"
 #include <QFile>
 
-void MainWindow::setupPageConnection()
+void MainWindow::UI_setupPageConnection()
 {
     ui->lblStatus->setFixedSize(16, 16);
     ui->lblStatus->setText("");
@@ -28,7 +28,7 @@ void MainWindow::setupPageConnection()
     pageConnectionLayout->addStretch();
 }
 
-void MainWindow::setupPageControl()
+void MainWindow::UI_setupPageControl()
 {
     /* CONTROL page */
     QVBoxLayout *pageControlLayout = new QVBoxLayout(pageControlWidget);
@@ -39,7 +39,7 @@ void MainWindow::setupPageControl()
     pageControlLayout->addStretch();
 }
 
-void MainWindow::setupLeftSidebar()
+void MainWindow::UI_setupLeftSidebar()
 {
     sideBarFrame = new QFrame();
     sideBarFrame->setObjectName("leftSideBar");
@@ -70,12 +70,12 @@ void MainWindow::setupLeftSidebar()
     ui->btnNavFirmware->setIconSize(iconSize);
 }
 
-void MainWindow::setupPageUpdate()
+void MainWindow::UI_setupPageUpdate()
 {
 
 }
 
-void MainWindow::setupCentralWidget()
+void MainWindow::UI_setupCentralWidget()
 {
     /* A Stacked Widget to manage and display (pages) */
     stackedWidget = new QStackedWidget(this);
@@ -83,7 +83,7 @@ void MainWindow::setupCentralWidget()
     stackedWidget->addWidget(pageControlWidget);
     stackedWidget->addWidget(pageUpdateWidget);
 }
-void MainWindow::setupLayouts(){
+void MainWindow::UI_setupLayouts(){
     /* Create 3 dedicated switchable pages for CONNECTION, MOTOR CONTROL and FIRMWARE UPDATE */
     pageConnectionWidget = new QWidget;
     pageConnectionWidget->setObjectName("pageConnectionWidget");
@@ -92,11 +92,11 @@ void MainWindow::setupLayouts(){
     pageUpdateWidget = new QWidget;
     pageUpdateWidget->setObjectName("pageUpdateWidget");
 
-    setupPageConnection();
-    setupPageControl();
-    setupPageUpdate();
-    setupLeftSidebar();
-    setupCentralWidget();
+    UI_setupPageConnection();
+    UI_setupPageControl();
+    UI_setupPageUpdate();
+    UI_setupLeftSidebar();
+    UI_setupCentralWidget();
 
     //1. CREATE THE GLOBAL HEADER
     QFrame *headerFrame = new QFrame();
@@ -161,7 +161,7 @@ void MainWindow::setupLayouts(){
     setCentralWidget(centralWidget);
 }
 
-void MainWindow::setupNavigation(){
+void MainWindow::UI_setupNavigation(){
     connect(ui->btnNavConnection, &QPushButton::clicked, [this]() {
         /* Switch to CONNECTION page when the Connection navigation button is clicked */
         stackedWidget->setCurrentIndex(stackedWidget->indexOf(pageConnectionWidget));
@@ -189,8 +189,15 @@ void MainWindow::setupNavigation(){
     ui->btnNavConnection->setChecked(true);
 }
 
-void MainWindow::applyStyles(){
+void MainWindow::UI_applyStyles(){
     QFile styleFile(":/style.qss");
+
+    qDebug() << "--- LISTING ALL COMPILED RESOURCES ---";
+    QDirIterator it(":", QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        qDebug() << it.next();
+    }
+    qDebug() << "--------------------------------------";
 
     qDebug() << "1. Does QSS exist? :" << QFile::exists(":/style.qss");
 
@@ -208,7 +215,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) , ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
-    serial = new QSerialPort(this);
     //Check for available connected device ports
     foreach (const QSerialPortInfo &port, QSerialPortInfo::availablePorts()){
         qDebug() << port.portName();
@@ -221,77 +227,94 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) , ui(new Ui::MainWi
             this,
             &MainWindow::handleSliderSpeedChanged);
 
-    connect(serial,
-            &QSerialPort::readyRead,
-            this,
-            &MainWindow::readData);
-
-    portTimer = new QTimer(this);
-    connect(portTimer, &QTimer::timeout, this, &MainWindow::updatePortList);
-    portTimer->start(1000);
-    updatePortList();
-
     //Set isRunning initially as false (not running)
     isRunning = false;
 
     cableUnplugged = false;
 
-    setupLayouts();
+    hardware = new SerialController(this);
 
-    setupNavigation();
+    connect(hardware,
+                        &SerialController::availablePortsUpdated,
+                        this,
+                        [this](QStringList ports) {
+                            UI_updatePortList(ports);
+            });
 
-    applyStyles();
+    connect(hardware,
+                        &SerialController::handshakeSuccessful,
+                        this,
+                        [this](QString portName, QString deviceName) {
+                            UI_updateConnection(true, portName, deviceName);
+            });
+
+    connect(hardware,
+                        &SerialController::connectionError,
+                        this,
+                        [this] (const QString &errorMessage) {
+                UI_showMessageBox(QMessageBox::Critical, "Error", "Failed to connect to device!", errorMessage);
+            });
+
+    connect(hardware,
+                        &SerialController::deviceDisconnected,
+                        this,
+                        [this](){
+                            UI_updateConnection(false, "", "");
+            });
+
+    UI_setupLayouts();
+    UI_setupNavigation();
+    UI_applyStyles();
 }
-
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-//BUTTON CONNECT SLOT
-void MainWindow::on_btnConnect_clicked(){
-
-    if (serial->isOpen()){
-        serial->close();
-
+void MainWindow::UI_updateConnection(bool connection, QString portName, QString deviceName)
+{
+    if(!connection) {
         ui->lblStatusText->setText("Disconnected");
         ui->lblStatus->setStyleSheet("background-color: #E74C3C; border-radius: 8px;");
         ui->btnConnect->setText("Connect");
         lblConnectedDevice->setText("Connected Device: None");
         lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
 
+        ui->btnStart->setText("START");
+        ui->sliderSpeed->setSliderPosition(0);
+
+        qDebug("The device is unplugged. Stopped the motor!");
+    } else {
+        QString portName = ui->comboBoxPort->currentText();
+        QString fullStatus = "Connected | " + portName + " |  " + deviceName;
+
+        ui->lblStatusText->setText("Connected");
+        ui->lblStatus->setStyleSheet("background-color: #2ECC71; border-radius: 8px;");
+        ui->btnConnect->setText("Disconnect");
+        // QString fullStatus = "Connected | " + portName + " | S4V Motor Controller Rev2.0";
+        lblConnectedDevice->setText(fullStatus);
+        lblHeaderDot->setStyleSheet("background-color: #2ECC71; border-radius: 6px;"); // Turn it green!
+    }
+}
+
+//BUTTON CONNECT SLOT
+void MainWindow::on_btnConnect_clicked(){
+    bool connection = hardware->isConnected();
+    if (connection){
+        hardware->disconnectDevice();
         cableUnplugged = true;
     }
     else {
-        serial->setPortName(ui->comboBoxPort->currentText());
-        serial->setBaudRate(QSerialPort::Baud115200);
-
-        if (serial->open(QIODevice::ReadWrite)){
-            ui->lblStatusText->setText("Connected");
-            ui->lblStatus->setStyleSheet("background-color: #2ECC71; border-radius: 8px;");
-            ui->btnConnect->setText("Disconnect");
-
-            QString portName = ui->comboBoxPort->currentText();
-            QString fullStatus = "Connected | " + portName + " | S4V Motor Controller Rev2.0";
-            lblConnectedDevice->setText(fullStatus);
-            lblHeaderDot->setStyleSheet("background-color: #2ECC71; border-radius: 6px;"); // Turn it green!
-
-            cableUnplugged = false;
-        }
-        //If serial connection failed
-        else {
-            QMessageBox::critical(this, "Error",
-                                  "Failed to connect to device!\n" + serial->errorString());
-            lblConnectedDevice->setText("Connected Device: None");
-            lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
-        }
+        QString selectedPort = ui->comboBoxPort->currentText();
+        hardware->connectToDevice(selectedPort);
+        cableUnplugged = false;
     }
 }
 
 void MainWindow::handleSliderSpeedChanged(int value){
     ui->lblValue->setText(QString::number(value));
-    if( (!serial->isOpen()) || (!isRunning) ){
+    if( (!hardware->isConnected()) || (!isRunning) ){
         return;
     }
     qDebug() << "Motor is running at Speed: " << value << "\n";
@@ -299,11 +322,11 @@ void MainWindow::handleSliderSpeedChanged(int value){
 
 void MainWindow::on_btnStart_clicked()
 {
-    if (!serial->isOpen()){
-        QMessageBox::critical(this, "Error",
-                              "Connect to the device first to control!\n");
+    if ( !hardware->isConnected()) {
+        UI_showMessageBox(QMessageBox::Critical, "Error", "Connect to the device first to control!\n", "");
         return;
     }
+
     isRunning = !isRunning;
 
     if (!isRunning){
@@ -315,39 +338,16 @@ void MainWindow::on_btnStart_clicked()
     }
 
     int value = ui->sliderSpeed->value();
-
-    QByteArray data = QByteArray::number(value);
-    data.append('\n');
-
-    serial->write(data);
+    hardware->setMotorSpeed(value);
 }
 
-void MainWindow::updatePortList()
+void MainWindow::UI_updatePortList(QStringList &portList)
 {
-    //1. Get the live list of ports connected at the moment
-    QList<QSerialPortInfo> availablePorts = QSerialPortInfo::availablePorts();
-    QStringList livePortNames;
-
-    for (const QSerialPortInfo &port : availablePorts){
-        livePortNames  << port.portName();
-    }
-
-    //2. Get the list of ports currently sitting inside my ComboBox
-    QStringList existingPortNames;
-    for (int i = 0; i < ui->comboBoxPort->count(); i++){
-        existingPortNames << ui->comboBoxPort->itemText(i);
-    }
-
-    //3. CHECK: If the lists are exactly the same, do nothing
-    if (livePortNames == existingPortNames){
-        return;
-    }
-
     //4. If a change happened, update the UI
     QString currentSelection = ui->comboBoxPort->currentText();
     //Wipe the box and add the fresh list
     ui->comboBoxPort->clear();
-    ui->comboBoxPort->addItems(livePortNames);
+    ui->comboBoxPort->addItems(portList);
 
     //Try to restore the previous selection (if that cable is still plugged in)
     int index = ui->comboBoxPort->findText(currentSelection);
@@ -355,22 +355,19 @@ void MainWindow::updatePortList()
         ui->comboBoxPort->setCurrentIndex(index);
     } else {
         cableUnplugged = true;
-
-        ui->lblStatusText->setText("Disconnected");
-        ui->lblStatus->setStyleSheet("background-color: #E74C3C; border-radius: 8px;");
-        ui->btnConnect->setText("Connect");
-        lblConnectedDevice->setText("Connected Device: None");
-        lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
+        // ui->lblStatusText->setText("Disconnected");
+        // ui->lblStatus->setStyleSheet("background-color: #E74C3C; border-radius: 8px;");
+        // ui->btnConnect->setText("Connect");
+        // lblConnectedDevice->setText("Connected Device: None");
+        // lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
     }
 }
 
-// void MainWindow::writeData(const QByteArray& data)
-// {
-
-// }
-
-void MainWindow::readData()
-{
-    const QByteArray data = serial->readAll();
-    qDebug() << data;
+void MainWindow::UI_showMessageBox(QMessageBox::Icon icon, const QString &title, const QString &msg, const QString &errorMessage) {
+    if (icon == QMessageBox::Critical){
+        QMessageBox::critical(this, title, msg + "\n" + errorMessage);
+    } else if (icon ==QMessageBox::Warning){
+        QMessageBox::warning (this, title, msg + "\n" + errorMessage);
+    }
 }
+

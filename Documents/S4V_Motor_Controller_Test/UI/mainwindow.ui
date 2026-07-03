@@ -37,7 +37,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Disconnected</string>
+     <string>Status</string>
     </property>
    </widget>
    <widget class="QComboBox" name="comboBoxPort">
@@ -150,6 +150,19 @@
     </property>
     <property name="toolButtonStyle">
      <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblStatusText">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>130</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disconnected</string>
     </property>
    </widget>
   </widget>
