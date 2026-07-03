@@ -105,3 +105,29 @@ QPushButton:checked {
     color: #FFFFFF;
     border-left: 4px solid #2BAAA8;
 }
+
+/* Style the Message Box Background */
+QMessageBox {
+    background-color: #F9FAFB; /* Light gray/white background */
+}
+
+/* Style the Text inside the Message Box */
+QMessageBox QLabel {
+    color: #1F2937; /* Dark text */
+    background-color: transparent;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* Style the "OK" button inside the Message Box */
+QMessageBox QPushButton {
+    background-color: #3B82F6; /* Bright blue button */
+    color: white;
+    border-radius: 6px;
+    padding: 6px 15px;
+    font-weight: bold;
+}
+
+QMessageBox QPushButton:hover {
+    background-color: #2563EB; /* Darker blue on hover */
+}

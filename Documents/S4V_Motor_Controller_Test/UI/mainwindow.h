@@ -12,6 +12,7 @@
 #include <QIcon>
 #include <QLabel>
 #include <QTimer>
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,6 +33,8 @@ private slots:
     void handleSliderSpeedChanged(int value);
     void on_btnStart_clicked();
     void updatePortList();
+    // void writeData(const QByteArray& data);
+    void readData();
 
 private:
     Ui::MainWindow *ui;

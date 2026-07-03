@@ -3,32 +3,28 @@ project(S4V_Motor_Controller_Test LANGUAGES CXX)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets SerialPort)
 
+# This automatically handles AUTOMOC, AUTOUIC, and AUTORCC
 qt_standard_project_setup()
 
 qt_add_executable(S4V_Motor_Controller_Test
     WIN32 MACOSX_BUNDLE
     main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
 
-)
+    UI/mainwindow.cpp
+    UI/mainwindow.h
 
-qt_add_resources(S4V_Motor_Controller_Test "stylesheets"
-    PREFIX "/"
-    FILES
-        style.qss
-        steamforvietnam.png
-        connection.svg
-        control.svg
-        update.svg
+    Hardware/serialcontroller.cpp
+    Hardware/serialcontroller.h
+
+    # This one file tells Qt where to find all your images and stylesheets
+    Resources/resources.qrc
 )
 
 target_link_libraries(S4V_Motor_Controller_Test
     PRIVATE
-        Qt::Core
-        Qt::Widgets
-        Qt::SerialPort
+    Qt::Core
+    Qt::Widgets
+    Qt::SerialPort
 )
 
 install(TARGETS S4V_Motor_Controller_Test

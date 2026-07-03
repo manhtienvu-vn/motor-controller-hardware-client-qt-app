@@ -221,6 +221,11 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) , ui(new Ui::MainWi
             this,
             &MainWindow::handleSliderSpeedChanged);
 
+    connect(serial,
+            &QSerialPort::readyRead,
+            this,
+            &MainWindow::readData);
+
     portTimer = new QTimer(this);
     connect(portTimer, &QTimer::timeout, this, &MainWindow::updatePortList);
     portTimer->start(1000);
@@ -274,6 +279,13 @@ void MainWindow::on_btnConnect_clicked(){
 
             cableUnplugged = false;
         }
+        //If serial connection failed
+        else {
+            QMessageBox::critical(this, "Error",
+                                  "Failed to connect to device!\n" + serial->errorString());
+            lblConnectedDevice->setText("Connected Device: None");
+            lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
+        }
     }
 }
 
@@ -288,6 +300,8 @@ void MainWindow::handleSliderSpeedChanged(int value){
 void MainWindow::on_btnStart_clicked()
 {
     if (!serial->isOpen()){
+        QMessageBox::critical(this, "Error",
+                              "Connect to the device first to control!\n");
         return;
     }
     isRunning = !isRunning;
@@ -348,4 +362,15 @@ void MainWindow::updatePortList()
         lblConnectedDevice->setText("Connected Device: None");
         lblHeaderDot->setStyleSheet("background-color: #E74C3C; border-radius: 6px;"); // Turn it red!
     }
+}
+
+// void MainWindow::writeData(const QByteArray& data)
+// {
+
+// }
+
+void MainWindow::readData()
+{
+    const QByteArray data = serial->readAll();
+    qDebug() << data;
 }
