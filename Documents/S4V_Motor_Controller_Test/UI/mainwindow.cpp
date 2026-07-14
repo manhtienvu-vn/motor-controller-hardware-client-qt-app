@@ -14,20 +14,13 @@ void MainWindow::UI_setupPageConnection()
 
     QFrame* firstSTEPFrame = new QFrame();
     firstSTEPFrame->setObjectName("firstSTEPFrame");
-    firstSTEPFrame->setFixedHeight(100);
-    firstSTEPFrame->setFixedWidth(600);
     QVBoxLayout* firstSTEPLayout = new QVBoxLayout(firstSTEPFrame);
-    firstSTEPLayout->setContentsMargins(10,10,10,10);
-
-
 
     QLabel* firstSTEPLabel = new QLabel("STEP 1: CHOOSE YOUR PORT");
     firstSTEPLabel->setObjectName("lblFirstSTEP");
 
     //2. CREATE THE BOTTOM SECTION
     QHBoxLayout *firstSTEPBottomLayout = new QHBoxLayout();
-    firstSTEPBottomLayout->setContentsMargins(0, 0, 0, 0);
-    firstSTEPBottomLayout->setSpacing(0);
     firstSTEPBottomLayout->addWidget(ui->comboBoxPort);
 
     // TIP: Change spacing from 0 to 15 so the icon doesn't touch the combo box!
@@ -48,22 +41,47 @@ void MainWindow::UI_setupPageConnection()
     firstSTEPLayout->addWidget(firstSTEPLabel);
     firstSTEPLayout->addLayout(firstSTEPBottomLayout);
 
+    QFrame* secondSTEPFrame = new QFrame();
+    secondSTEPFrame->setObjectName("secondSTEPFrame");
+    QVBoxLayout* secondSTEPLayout = new QVBoxLayout(secondSTEPFrame);
+
+    QLabel* secondSTEPLabel = new QLabel("STEP 2: CONNECT TO MOTOR CONTROLLER");
+    secondSTEPLabel->setObjectName("lblSecondSTEP");
+    secondSTEPLayout->addWidget(secondSTEPLabel);
+    secondSTEPLayout->addWidget(ui->btnConnect);
+
+
     QLabel *lblActiveDevice = new QLabel("ACTIVE DEVICE");
     lblActiveDevice->setObjectName("lblActiveDevice");
-    // pageConnectionLayout->addWidget(lblActiveDevice);
-    // pageConnectionLayout->addWidget(ui->comboBoxPort);
-    pageConnectionLayout->addWidget(firstSTEPFrame, 0, Qt::AlignCenter);
-    pageConnectionLayout->addWidget(ui->btnConnect);
+    pageConnectionLayout->addSpacing(20);
+    pageConnectionLayout->addWidget(firstSTEPFrame);
+    pageConnectionLayout->addSpacing(20);
+    pageConnectionLayout->addWidget(secondSTEPFrame);
+
+    QFrame* thirdSTEPFrame = new QFrame();
+    thirdSTEPFrame->setObjectName("thirdSTEPFrame");
+
+    QVBoxLayout* thirdSTEPLayout = new QVBoxLayout(thirdSTEPFrame);
+    thirdSTEPFrame->setFixedHeight(120);
+    thirdSTEPFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    pageConnectionLayout->addSpacing(20);
+    QLabel* thirdSTEPLabel = new QLabel("CONNECTION STATUS");
+    thirdSTEPLabel->setObjectName("lblThirdSTEP");
+    thirdSTEPLayout->addWidget(thirdSTEPLabel);
 
     // Create a horizontal box for the Status Dot and the Status Text
-    QHBoxLayout *statusContainer = new QHBoxLayout();
+    QHBoxLayout *statusContainer = new QHBoxLayout(thirdSTEPFrame);
     statusContainer->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     statusContainer->setSpacing(8);
     statusContainer->addWidget(ui->lblStatus);
     statusContainer->addWidget(ui->lblStatusText);
 
-    pageConnectionLayout->addLayout(statusContainer);
+    thirdSTEPLayout->addLayout(statusContainer);
+
+    pageConnectionLayout->addWidget(thirdSTEPFrame);
     pageConnectionLayout->addStretch();
+    pageConnectionLayout->setContentsMargins(50, 30, 50, 30);
 }
 
 void MainWindow::UI_setupPageControl()

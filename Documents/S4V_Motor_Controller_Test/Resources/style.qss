@@ -1,10 +1,10 @@
 /* style.qss */
 * {
-    font-family: "Quicksand";
+    font-family: "Montserrat";
 }
 
 QFrame#leftSideBar {
-    background-color: #2A2A2A;
+    background-color: #0B3577;
 }
 
 QFrame#headerFrame {
@@ -16,8 +16,9 @@ QFrame#headerFrame {
 }
 
 #statusPill {
-    background-color: #1E242B; /* Deep dark background */
-    border-radius: 12px;       /* Perfectly rounded corners */
+    background-color: #0B3577; /* Deep dark background */
+    border-radius: 8px;       /* Perfectly rounded corners */
+    color: #F9F9F9
 }
 
 #lblHeaderDot {
@@ -30,17 +31,44 @@ QFrame#headerFrame {
     font-size: 14px;
     font-weight: bold;
     background-color: transparent; /* Prevents the label from drawing its own box */
+    color: #F9F9F9
 }
 
 QFrame#firstSTEPFrame {
-    background-color: #AADBE9; /* Example: Soft dark gray background for the card */
+    background-color: #0B3577; /* Example: Soft dark gray background for the card */
     border-radius: 12px;       /* Example: Gives it beautiful rounded corners */
-    border: 1px solid #3A3F48; /* Example: A subtle border to make it pop */
+    border: 1px; /* Example: A subtle border to make it pop */
 }
 
 QLabel#lblFirstSTEP {
     font-size: 18px;
     font-weight: bold;
+    color: #F9F9F9
+}
+
+QFrame#secondSTEPFrame {
+    background-color: #0B3577; /* Example: Soft dark gray background for the card */
+    border-radius: 12px;       /* Example: Gives it beautiful rounded corners */
+    border: 1px; /* Example: A subtle border to make it pop */
+}
+
+QLabel#lblSecondSTEP {
+    font-size: 18px;
+    font-weight: bold;
+    color: #F9F9F9
+}
+
+QFrame#thirdSTEPFrame {
+    background-color: #0B3577; /* Example: Soft dark gray background for the card */
+    border-radius: 12px;       /* Example: Gives it beautiful rounded corners */
+    border: 1px solid ; /* Example: A subtle border to make it pop */
+
+}
+
+QLabel#lblThirdSTEP {
+    font-size: 18px;
+    font-weight: bold;
+    color: #F9F9F9
 }
 
 #lblActiveDevice {
@@ -51,7 +79,7 @@ QLabel#lblFirstSTEP {
 }
 
 QStackedWidget {
-    background-color: #2A2A2A;
+    background-color: #041246;
 }
 
 QComboBox {
@@ -71,7 +99,7 @@ QComboBox QAbstractItemView {
 }
 
 #pageConnectionWidget {
-    background-color: #121212; /* A deep, dark background */
+    background-color: #041246; /* A deep, dark background */
 }
 
 #lblStatus {
@@ -116,7 +144,7 @@ QPushButton:hover {
 
 QPushButton:checked {
     background-color: #14887B;
-    color: #FFFFFF;
+    color: #AADBE9;
     border-left: 4px solid #2BAAA8;
 }
 
