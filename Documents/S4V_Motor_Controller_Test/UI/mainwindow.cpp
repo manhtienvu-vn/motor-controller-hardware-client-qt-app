@@ -89,6 +89,31 @@ void MainWindow::UI_setupPageControl()
     /* CONTROL page */
     QVBoxLayout *pageControlLayout = new QVBoxLayout(pageControlWidget);
 
+    QFrame *motorFrame = new QFrame();
+    QHBoxLayout *motorHorizontalLayout1 = new QHBoxLayout(motorFrame);
+
+    QFrame* dcMotor1Frame = new QFrame();
+    dcMotor1Frame->setObjectName("dcMotor1Frame");
+    QVBoxLayout* dcMotor1Layout = new QVBoxLayout(dcMotor1Frame);
+    QLabel* dcMotor1Label = new QLabel("DC MOTOR 1");
+    dcMotor1Label->setObjectName("lblDcMotor1");
+
+    QFrame* dcMotor2Frame = new QFrame();
+    dcMotor2Frame->setObjectName("dcMotor2Frame");
+    QVBoxLayout* dcMotor2Layout = new QVBoxLayout(dcMotor2Frame);
+    QLabel* dcMotor2Label = new QLabel("DC MOTOR 2");
+    dcMotor2Label->setObjectName("lblDcMotor2");
+
+
+    dcMotor1Layout->addWidget(dcMotor1Label);
+    dcMotor2Layout->addWidget(dcMotor2Label);
+
+    motorHorizontalLayout1->addWidget(dcMotor1Frame);
+    motorHorizontalLayout1->addWidget(dcMotor2Frame);
+
+    pageControlLayout->addWidget(motorFrame);
+
+
     pageControlLayout->addWidget(ui->sliderSpeed);
     pageControlLayout->addWidget(ui->lblValue);
     pageControlLayout->addWidget(ui->btnStart);

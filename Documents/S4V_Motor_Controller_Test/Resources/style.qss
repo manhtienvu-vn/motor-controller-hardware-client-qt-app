@@ -71,6 +71,33 @@ QLabel#lblThirdSTEP {
     color: #F9F9F9
 }
 
+QFrame#dcMotor1Frame {
+    background-color: #0B3577; /* Example: Soft dark gray background for the card */
+    border-radius: 12px;       /* Example: Gives it beautiful rounded corners */
+    border: 1px solid ; /* Example: A subtle border to make it pop */
+
+}
+
+QLabel#lblDcMotor1 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #F9F9F9
+}
+
+QFrame#dcMotor2Frame {
+    background-color: #0B3577; /* Example: Soft dark gray background for the card */
+    border-radius: 12px;       /* Example: Gives it beautiful rounded corners */
+    border: 1px solid ; /* Example: A subtle border to make it pop */
+
+}
+
+QLabel#lblDcMotor2 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #F9F9F9
+}
+
+
 #lblActiveDevice {
     color: #6B7280;
     font-size: 12px;
