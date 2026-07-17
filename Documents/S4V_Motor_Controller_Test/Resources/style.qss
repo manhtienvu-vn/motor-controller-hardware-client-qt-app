@@ -1,6 +1,6 @@
 /* style.qss */
 * {
-    font-family: "Montserrat";
+    font-family: "Roboto";
 }
 
 QFrame#leftSideBar {
@@ -21,6 +21,8 @@ QFrame#headerFrame {
     color: #F9F9F9
 }
 
+
+
 #lblHeaderDot {
     background-color: #E74C3C; /* The bright blue color */
     border-radius: 6px;        /* Must be exactly half of the 12px FixedSize! */
@@ -34,6 +36,45 @@ QFrame#headerFrame {
     color: #F9F9F9
 }
 
+#lblDeviceName {
+    color: #C9D1D9; /* Soft, readable light gray/white */
+    font-size: 28px;
+    font-weight: bold;
+    background-color: transparent; /* Prevents the label from drawing its own box */
+    color: #F9F9F9
+}
+
+#lblIdText {
+    color: #C9D1D9; /* Soft, readable light gray/white */
+    font-size: 20px;
+/*    font-weight: bold;*/
+    background-color: transparent; /* Prevents the label from drawing its own box */
+    color: #F9F9F9
+}
+
+
+QLineEdit#idInput {
+    background-color: #FFFFFF;
+    color: #000000;
+
+    /* Add padding so the "1" doesn't touch the left wall */
+    padding-left: 10px;
+    padding-right: 10px;
+
+    /* Clean, even border on all sides */
+    border: 2px solid #2196F3;
+    border-radius: 6px;
+
+    /* Force a comfortable height */
+    min-height: 28px;
+
+    font-size: 20px;
+    font-weight: bold;
+}
+
+QLineEdit#idInput:focus {
+    border: 2px solid #0B3577; /* Darkens the border slightly when typing */
+}
 QFrame#firstSTEPFrame {
     background-color: #0B3577; /* Example: Soft dark gray background for the card */
     border-radius: 12px;       /* Example: Gives it beautiful rounded corners */
@@ -41,6 +82,7 @@ QFrame#firstSTEPFrame {
 }
 
 QLabel#lblFirstSTEP {
+    font-family: "Roboto Regular";
     font-size: 18px;
     font-weight: bold;
     color: #F9F9F9
@@ -53,6 +95,7 @@ QFrame#secondSTEPFrame {
 }
 
 QLabel#lblSecondSTEP {
+    font-family: "Roboto Regular";
     font-size: 18px;
     font-weight: bold;
     color: #F9F9F9
@@ -62,10 +105,10 @@ QFrame#thirdSTEPFrame {
     background-color: #0B3577; /* Example: Soft dark gray background for the card */
     border-radius: 12px;       /* Example: Gives it beautiful rounded corners */
     border: 1px solid ; /* Example: A subtle border to make it pop */
-
 }
 
 QLabel#lblThirdSTEP {
+    font-family: "Roboto Regular";
     font-size: 18px;
     font-weight: bold;
     color: #F9F9F9
@@ -78,18 +121,85 @@ QFrame#dcMotor1Frame {
 
 }
 
-QLabel#lblDcMotor1 {
-    font-size: 18px;
-    font-weight: bold;
-    color: #F9F9F9
-}
-
 QFrame#dcMotor2Frame {
     background-color: #0B3577; /* Example: Soft dark gray background for the card */
     border-radius: 12px;       /* Example: Gives it beautiful rounded corners */
     border: 1px solid ; /* Example: A subtle border to make it pop */
 
 }
+
+QLabel#lblDcMotor1 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #F9F9F9
+}
+
+QFrame#motor1SpeedFrame,
+QFrame#motor2SpeedFrame,
+QFrame#motor1CurrentFrame,
+QFrame#motor2CurrentFrame{
+    background-color: #003691; /* Dark blue background */
+    border-radius: 8px;        /* Rounded corners */
+}
+
+/* Make sure all text inside these pills is white, bold, and transparent */
+QFrame#motor1SpeedFrame QLabel,
+QFrame#motor2SpeedFrame QLabel,
+QFrame#motor1CurrentFrame QLabel,
+QFrame#motor2CurrentFrame QLabel{
+    background-color: transparent;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+/* 1. Style the Mode Button to be clean and flat */
+QPushButton#btnMotor1Mode,
+QPushButton#btnMotor2Mode {
+    background-color: transparent;
+    border: none;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 2px 8px;
+    text-align: right;
+}
+
+/* Override hover effect specifically for this button to keep it clean */
+QPushButton#btnMotor1Mode:hover {
+    color: #AADBE9;
+    background-color: transparent;
+}
+
+QPushButton#btnMotor2Mode:hover {
+    color: #AADBE9;
+    background-color: transparent;
+}
+
+/* 2. Default state for the Mode Frame */
+QFrame#motor1ModeFrame,
+QFrame#motor2ModeFrame {
+    border-radius: 6px;
+    border: 1px solid #1F3A60;
+    background-color: #0B3577; /* Default theme color */
+}
+
+/* 3. Dynamic color changes for the entire Frame! */
+QFrame#motor1ModeFrame[activeMode="coast"] {
+    background-color: #51C7BF; /* Forest green to show Coast is active */
+}
+
+QFrame#motor1ModeFrame[activeMode="brake"] {
+    background-color: #FFB341; /* Warning red to show Brake is active */
+}
+
+QFrame#motor2ModeFrame[activeMode="coast"] {
+    background-color: #51C7BF; /* Forest green to show Coast is active */
+}
+
+QFrame#motor2ModeFrame[activeMode="brake"] {
+    background-color: #FFB341; /* Warning red to show Brake is active */
+}
+
 
 QLabel#lblDcMotor2 {
     font-size: 18px;
@@ -141,7 +251,14 @@ QComboBox QAbstractItemView {
     letter-spacing: 1px;
 }
 
-#lblValue {
+#lblMotor1Value {
+    color: #FEFEFA;
+    font-weight: bold;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+#lblMotor2Value {
     color: #FEFEFA;
     font-weight: bold;
     font-size: 16px;
@@ -149,8 +266,9 @@ QComboBox QAbstractItemView {
 }
 
 QToolButton {
+    font-family: "Roboto";
     font-weight: bold;
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: 1px;
 }
 
@@ -202,11 +320,4 @@ QMessageBox QPushButton:hover {
     background-color: #2563EB; /* Darker blue on hover */
 }
 
-QMainWindow {
-    font-family: "Quicksand";
-}
 
-QLabel#heading {
-    font-size: 18pt;
-    font-family: "Quicksand";
-    font-weight: bold;

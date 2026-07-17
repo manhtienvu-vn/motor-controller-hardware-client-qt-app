@@ -30,6 +30,11 @@ qt_add_resources(S4V_Motor_Controller_Test "assets"
         Resources/connection.svg
         Resources/control.svg
         Resources/update.svg
+        Resources/motor_controller.png
+        Resources/speed.svg
+        Resources/brake.svg
+        Resources/electricity.svg
+
 )
 
 target_link_libraries(S4V_Motor_Controller_Test

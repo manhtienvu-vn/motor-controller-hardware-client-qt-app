@@ -14,6 +14,7 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QDirIterator>
+#include <QLineEdit>
 #include "Hardware/serialcontroller.h"
 
 QT_BEGIN_NAMESPACE
@@ -32,8 +33,12 @@ public:
 
 private slots:
     void on_btnConnect_clicked();
-    void handleSliderSpeedChanged(int value);
-    void on_btnStart_clicked();
+    void handleMotor1SliderSpeedChanged(int value);
+    void handleMotor2SliderSpeedChanged(int value);
+    void on_btnMotor1Start_clicked();
+    void on_btnMotor2Start_clicked();
+    void on_btnMotor1Mode_clicked();
+    void on_btnMotor2Mode_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -46,9 +51,15 @@ private:
     QWidget *pageControlWidget;
     QWidget *pageUpdateWidget;
 
-    bool isRunning;
+    QLabel *devicePictureLabel;
+
+    bool motor1IsRunning;
+    bool motor2IsRunning;
     bool cableUnplugged;
     SerialController* hardware;
+
+    bool motor1Mode;
+    bool motor2Mode;
 
     //Helper functions in constructor
     void UI_setupLayouts();
